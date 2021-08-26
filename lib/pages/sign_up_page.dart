@@ -1,11 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shamo/pages/widgets/loading_button.dart';
+import 'package:shamo/providers/auth_provider.dart';
 import 'package:shamo/theme.dart';
 
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+class SignUpPage extends StatefulWidget {
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  final TextEditingController nameController = TextEditingController(text: '');
+
+  final TextEditingController usernameController =
+      TextEditingController(text: '');
+
+  final TextEditingController emailController = TextEditingController(text: '');
+
+  final TextEditingController passwordController =
+      TextEditingController(text: '');
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleSignUp() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.register(
+          name: nameController.text,
+          username: usernameController.text,
+          email: emailController.text,
+          password: passwordController.text)) {
+        Navigator.pushNamed(context, '/home');
+        print('signUp');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Gagal Register',
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: alertColor,
+          ),
+        );
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
+
     Widget header() {
       return Container(
         margin: EdgeInsets.only(top: 30),
@@ -64,6 +112,7 @@ class SignUpPage extends StatelessWidget {
                     ),
                     Expanded(
                         child: TextFormField(
+                      controller: nameController,
                       style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(
                           hintText: 'Your Full Name',
@@ -109,6 +158,7 @@ class SignUpPage extends StatelessWidget {
                     SizedBox(width: 16),
                     Expanded(
                         child: TextFormField(
+                      controller: usernameController,
                       style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(
                         hintText: 'Your Username',
@@ -155,6 +205,7 @@ class SignUpPage extends StatelessWidget {
                     SizedBox(width: 16),
                     Expanded(
                         child: TextFormField(
+                      controller: emailController,
                       style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(
                         hintText: 'Your Email Address',
@@ -201,6 +252,7 @@ class SignUpPage extends StatelessWidget {
                     SizedBox(width: 16),
                     Expanded(
                         child: TextFormField(
+                      controller: passwordController,
                       style: primaryTextStyle,
                       obscureText: true,
                       decoration: InputDecoration.collapsed(
@@ -223,9 +275,7 @@ class SignUpPage extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 30),
         child: TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
+          onPressed: handleSignUp,
           child: Text(
             'Sign Up',
             style: primaryTextStyle.copyWith(
@@ -283,7 +333,7 @@ class SignUpPage extends StatelessWidget {
               usernameInput(),
               emailInput(),
               passwordInput(),
-              signUpButton(),
+              isLoading ? LoadingButton() : signUpButton(),
               Spacer(),
               footer()
             ],

@@ -4,7 +4,7 @@ import 'package:shamo/pages/widgets/product_tile.dart';
 import 'package:shamo/theme.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shamo/theme.dart';
 
-class WishlistCard extends StatelessWidget {
-  const WishlistCard({Key key}) : super(key: key);
+class CheckoutCard extends StatelessWidget {
+  const CheckoutCard({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-        top: 20,
+        top: 12,
       ),
-      padding: EdgeInsets.only(
-        top: 10,
-        left: 12,
-        bottom: 14,
-        right: 20,
+      padding: EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: 12,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -22,11 +20,16 @@ class WishlistCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              'assets/image_shoes.png',
-              width: 60,
+          Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: backgroundColor4,
+              image: DecorationImage(
+                image: AssetImage('assets/image_shoes.png'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           SizedBox(
@@ -41,18 +44,27 @@ class WishlistCard extends StatelessWidget {
                   style: primaryTextStyle.copyWith(
                     fontWeight: semiBold,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(
+                  height: 2,
                 ),
                 Text(
                   '\$143,98',
                   style: priceTextStyle,
-                )
+                ),
               ],
             ),
           ),
-          Image.asset(
-            'assets/button_wishlist_blue.png',
-            width: 34,
-          )
+          SizedBox(
+            width: 12,
+          ),
+          Text(
+            '2 Items',
+            style: secondaryTextStyle.copyWith(
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );

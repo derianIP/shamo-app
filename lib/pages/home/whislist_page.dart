@@ -3,7 +3,7 @@ import 'package:shamo/pages/widgets/whislist_card.dart';
 import 'package:shamo/theme.dart';
 
 class WhislistPage extends StatelessWidget {
-  const WhislistPage({Key? key}) : super(key: key);
+  const WhislistPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

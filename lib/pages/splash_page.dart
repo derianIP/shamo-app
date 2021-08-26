@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shamo/theme.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key}) : super(key: key);
+  const SplashPage({Key key}) : super(key: key);
 
   @override
   _SplashPageState createState() => _SplashPageState();
@@ -12,7 +12,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   @override
-  void initState() {  
+  void initState() {
     Timer(
       Duration(seconds: 3),
       () => Navigator.pushNamed(context, '/sign-in'),
