@@ -106,7 +106,8 @@ class _SignInPageState extends State<SignInPage> {
                         hintText: 'Your Email Address',
                         hintStyle: subtitleTextStyle,
                       ),
-                    ))
+                    ),
+                    ),
                   ],
                 ),
               ),

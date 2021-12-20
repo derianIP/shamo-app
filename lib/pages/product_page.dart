@@ -2,9 +2,17 @@ import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shamo/models/product_model.dart';
+import 'package:shamo/pages/detail_chat_page.dart';
+import 'package:shamo/providers/cart_provider.dart';
+import 'package:shamo/providers/wishlist_provider.dart';
 import 'package:shamo/theme.dart';
 
 class ProductPage extends StatefulWidget {
+  final ProductModel product;
+  ProductPage({this.product});
+
   @override
   _ProductPageState createState() => _ProductPageState();
 }
@@ -32,6 +40,9 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
+
     Future<Void> showSuccessDialog() async {
       return showDialog(
         context: context,
@@ -157,10 +168,10 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           CarouselSlider(
-            items: images
+            items: widget.product.galleries
                 .map(
-                  (image) => Image.asset(
-                    image,
+                  (image) => Image.network(
+                    image.url,
                     width: MediaQuery.of(context).size.width,
                     height: 310,
                     fit: BoxFit.cover,
@@ -179,11 +190,12 @@ class _ProductPageState extends State<ProductPage> {
             height: 20,
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: images.map((e) {
-                index++;
-                return indicator(index);
-              }).toList())
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: widget.product.galleries.map((e) {
+              index++;
+              return indicator(index);
+            }).toList(),
+          )
         ],
       );
     }
@@ -234,14 +246,14 @@ class _ProductPageState extends State<ProductPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'TERREX URBAN LOW',
+                          widget.product.name,
                           style: primaryTextStyle.copyWith(
                             fontWeight: semiBold,
                             fontSize: 18,
                           ),
                         ),
                         Text(
-                          'Hiking',
+                          widget.product.category.name,
                           style: subtitleTextStyle.copyWith(
                             fontSize: 12,
                           ),
@@ -251,11 +263,13 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isWishlist = !isWishlist;
-                      });
+                      // setState(() {
+                      //   isWishlist = !isWishlist;
+                      // });
 
-                      if (isWishlist) {
+                      wishlistProvider.setProduct(widget.product);
+
+                      if (wishlistProvider.isWishlist(widget.product)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
@@ -278,7 +292,7 @@ class _ProductPageState extends State<ProductPage> {
                       }
                     },
                     child: Image.asset(
-                      isWishlist
+                      wishlistProvider.isWishlist(widget.product)
                           ? 'assets/button_wishlist_blue.png'
                           : 'assets/button_wishlist.png',
                       width: 46,
@@ -309,7 +323,7 @@ class _ProductPageState extends State<ProductPage> {
                     style: primaryTextStyle,
                   ),
                   Text(
-                    '\$143,98',
+                    '\$${widget.product.price}',
                     style: priceTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: semiBold,
@@ -340,7 +354,7 @@ class _ProductPageState extends State<ProductPage> {
                     height: 12,
                   ),
                   Text(
-                    'Unpaved trails and mixed surfaces are easy when you have the traction and support you need. Casual enough for the daily commute.',
+                    widget.product.description,
                     style: subtitleTextStyle.copyWith(
                       fontWeight: light,
                     ),
@@ -397,7 +411,13 @@ class _ProductPageState extends State<ProductPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/detail-chat');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailChatPage(product: widget.product),
+                        ),
+                      );
                     },
                     child: Container(
                       width: 54,
@@ -416,7 +436,10 @@ class _ProductPageState extends State<ProductPage> {
                     child: Container(
                       height: 54,
                       child: TextButton(
-                          onPressed: showSuccessDialog,
+                          onPressed: () {
+                            cartProvider.addCart(widget.product);
+                            showSuccessDialog();
+                          },
                           style: TextButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
